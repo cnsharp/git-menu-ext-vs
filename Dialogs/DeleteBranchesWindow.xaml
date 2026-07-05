@@ -1,0 +1,19 @@
+<Window x:Class="CnSharp.VSIX.Git.Dialogs.DeleteBranchesWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Delete Branches" Height="140" Width="420"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" Content="Branch keyword (e.g. release-):" Padding="0,0,0,4"/>
+        <TextBox Grid.Row="1" x:Name="KeywordBox" Height="24" VerticalContentAlignment="Center"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+            <Button Content="Delete" Width="75" IsDefault="True" Click="OkClick" Margin="0,0,8,0"/>
+            <Button Content="Cancel" Width="75" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

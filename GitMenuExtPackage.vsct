@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CommandTable xmlns="http://schemas.microsoft.com/VisualStudio/2005-10-18/CommandTable"
+              xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <Extern href="stdidcmd.h"/>
+  <Extern href="vsshlids.h"/>
+
+  <Commands package="guidGitMenuExtPackage">
+    <!--
+      Custom group placed on the VS top-level Git root menu (guidGitTopLevelMenu:GitRootMenu = 0xF000, menu/IDM).
+      Buttons are placed inside this group to form their own section (with separator).
+      priority=0x0500, positioned below the built-in Manage Branches.
+    -->
+    <Groups>
+      <Group guid="guidGitMenuExtCmdSet" id="GitMenuExtGroup" priority="0x0500">
+        <Parent guid="guidGitTopLevelMenu" id="GitRootMenu"/>
+      </Group>
+
+      <!-- Placed on the Git repository window commit history context menu (guidGitTopLevelMenu:GitHistoryContextMenu = 0xF040, confirmed via VSIP) -->
+      <Group guid="guidGitMenuExtCmdSet" id="HistoryContextGroup" priority="0x0100">
+        <Parent guid="guidGitTopLevelMenu" id="GitHistoryContextMenu"/>
+      </Group>
+    </Groups>
+
+    <Buttons>
+      <Button guid="guidGitMenuExtCmdSet" id="DeleteBranchesCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidGitMenuExtCmdSet" id="GitMenuExtGroup"/>
+        <Strings>
+          <ButtonText>Delete Branches...</ButtonText>
+          <CommandName>DeleteBranches</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidGitMenuExtCmdSet" id="DeleteOutdatedBranchesCommandId" priority="0x0200" type="Button">
+        <Parent guid="guidGitMenuExtCmdSet" id="GitMenuExtGroup"/>
+        <Strings>
+          <ButtonText>Delete Outdated Branches...</ButtonText>
+          <CommandName>DeleteOutdatedBranches</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidGitMenuExtCmdSet" id="CopyCommitIdCommandId" priority="0x0100" type="Button">
+        <Parent guid="guidGitMenuExtCmdSet" id="HistoryContextGroup"/>
+        <Strings>
+          <ButtonText>Copy Commit ID</ButtonText>
+          <CommandName>CopyCommitId</CommandName>
+        </Strings>
+      </Button>
+
+      <Button guid="guidGitMenuExtCmdSet" id="ExportSelectedCommitsCommandId" priority="0x0200" type="Button">
+        <Parent guid="guidGitMenuExtCmdSet" id="HistoryContextGroup"/>
+        <Strings>
+          <ButtonText>Export Changed Files...</ButtonText>
+          <CommandName>ExportSelectedCommits</CommandName>
+        </Strings>
+      </Button>
+    </Buttons>
+  </Commands>
+
+  <Symbols>
+    <GuidSymbol name="guidGitMenuExtPackage" value="{6f8a0a0a-1234-4321-abcd-ef0123456789}" />
+    <GuidSymbol name="guidGitMenuExtCmdSet" value="{7b9c1b1b-5678-8765-bcde-f01234567890}">
+      <IDSymbol name="GitMenuExtGroup" value="0x1020"/>
+      <IDSymbol name="HistoryContextGroup" value="0x1022"/>
+      <IDSymbol name="DeleteBranchesCommandId" value="0x0100"/>
+      <IDSymbol name="DeleteOutdatedBranchesCommandId" value="0x0200"/>
+      <IDSymbol name="CopyCommitIdCommandId" value="0x0500"/>
+      <IDSymbol name="ExportSelectedCommitsCommandId" value="0x0600"/>
+    </GuidSymbol>
+
+    <!--
+      Command-set GUID for the VS top-level Git root menu (confirmed from local GitProvider.pkgdef).
+      GitRootMenu=0xF000 is the Git root menu itself (menu/IDM); custom group is placed under it.
+      Other known IDs under the same GUID: Open=0x1026, Share=0x1027, ShowHistory=0x1005, branch context menu=0xf032.
+    -->
+    <GuidSymbol name="guidGitTopLevelMenu" value="{57735D06-C920-4415-A2E0-7D6E6FBDFA99}">
+      <IDSymbol name="GitRootMenu" value="0xF000"/>
+      <IDSymbol name="GitHistoryContextMenu" value="0xF040"/>
+    </GuidSymbol>
+  </Symbols>
+
+</CommandTable>

@@ -1,0 +1,37 @@
+<Window x:Class="CnSharp.VSIX.Git.Dialogs.ExportSelectedCommitsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Export Changed Files (Selected Commits)" Height="380" Width="560"
+        ResizeMode="NoResize" WindowStartupLocation="CenterScreen">
+    <Grid Margin="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Content="Selected commits:"/>
+        <ListBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3" x:Name="CommitsList" Margin="4,0,0,8"
+                 FontFamily="Consolas" ScrollViewer.HorizontalScrollBarVisibility="Auto"/>
+
+        <Label Grid.Row="2" Grid.Column="0" Content="Extensions:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" x:Name="ExtensionsBox" Margin="4,4,0,4" Height="24" VerticalContentAlignment="Center"/>
+
+        <Label Grid.Row="3" Grid.Column="0" Content="Output dir:" VerticalAlignment="Center"/>
+        <TextBox Grid.Row="3" Grid.Column="1" x:Name="OutputDirBox" Margin="4,4,4,4" Height="24" VerticalContentAlignment="Center"/>
+        <Button Grid.Row="3" Grid.Column="2" Content="..." Width="28" Height="24" Click="BrowseClick"/>
+
+        <StackPanel Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,8,0,0" HorizontalAlignment="Right">
+            <CheckBox x:Name="ZipCheckBox" Content="Export as zip" VerticalAlignment="Center" Margin="0,0,16,0"/>
+            <Button Content="Export" Width="75" IsDefault="True" Click="OkClick" Margin="0,0,8,0"/>
+            <Button Content="Cancel" Width="75" IsCancel="True"/>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,126 @@
+<Project>
+
+  <!-- Explicit SDK import: VSSDK packaging targets must be imported after Sdk.targets at the end,
+       otherwise PrepareForRunDependsOn (which generates pkgdef/vsix and deploys on F5) will be overridden by the SDK. -->
+  <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk" />
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>net472</TargetFramework>
+    <RootNamespace>CnSharp.VSIX.Git</RootNamespace>
+    <AssemblyName>GitMenuExt</AssemblyName>
+    <GeneratePkgDefFile>true</GeneratePkgDefFile>
+    <!-- Important: Make pkgdef register the package assembly using CodeBase (DLL absolute path).
+         Otherwise VS, when merging command tables on startup, looks up only by assembly display name "GitMenuExt",
+         which is not in the GAC and not probed early in extension directories => load failure (0x800a006f) => CTMENU not found => menu won't show. -->
+    <RegisterWithCodebase>true</RegisterWithCodebase>
+    <IncludeAssemblyInVSIXContainer>true</IncludeAssemblyInVSIXContainer>
+    <IncludeDebugSymbolsInVSIXContainer>false</IncludeDebugSymbolsInVSIXContainer>
+    <IncludeDebugSymbolsInLocalVSIXDeployment>true</IncludeDebugSymbolsInLocalVSIXDeployment>
+    <CopyBuildOutputToOutputDirectory>true</CopyBuildOutputToOutputDirectory>
+    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
+    <CreateVsixContainer>true</CreateVsixContainer>
+    <EnableDefaultItems>false</EnableDefaultItems>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <!-- F5 Debug: launch VS experimental instance and deploy this extension -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <DebugType>full</DebugType>
+    <DeployExtension>true</DeployExtension>
+    <StartAction>Program</StartAction>
+    <StartProgram>$(DevEnvDir)devenv.exe</StartProgram>
+	<StartArguments>/rootsuffix Exp</StartArguments>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="18.5.40034" PrivateAssets="all" GeneratePathProperty="true" />
+    <PackageReference Include="Microsoft.VisualStudio.SDK" Version="17.0.31902.203" PrivateAssets="all" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Commands\CopyCommitIdCommand.cs" />
+    <Compile Include="Commands\ExportChangedFilesCommand.cs" />
+    <Compile Include="Dialogs\ExportChangedFilesWindow.xaml.cs" />
+    <Compile Include="GitMenuExtPackage.cs" />
+    <Compile Include="Commands\DeleteBranchesCommand.cs" />
+    <Compile Include="Commands\DeleteOutdatedBranchesCommand.cs" />
+    <Compile Include="Utils\GitHistorySelection.cs" />
+    <Compile Include="Utils\ExportChangedFilesCore.cs" />
+    <Compile Include="Dialogs\Settings.cs" />
+    <Compile Include="Dialogs\DeleteBranchesWindow.xaml.cs">
+      <DependentUpon>DeleteBranchesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\DeleteOutdatedBranchesWindow.xaml.cs">
+      <DependentUpon>DeleteOutdatedBranchesWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Utils\GitUtils.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Include="Dialogs\DeleteBranchesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DeleteOutdatedBranchesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\ExportChangedFilesWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+
+  <ItemGroup>
+    <VSCTCompile Include="GitMenuExtPackage.vsct">
+      <ResourceName>Menus.ctmenu</ResourceName>
+    </VSCTCompile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="GitMenuExtPackage.vsct" />
+    <None Include="source.extension.vsixmanifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="app.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Extension display icon: packaged into VSIX for vsixmanifest <Icon> reference -->
+    <Content Include="Icon.png">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <!-- Marketplace detail page / license: packaged into VSIX for vsixmanifest Details/License resource references -->
+    <Content Include="README.md">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+    <Content Include="LICENSE">
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
+  </ItemGroup>
+
+  <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk" />
+
+  <!-- VSSDK real packaging targets (vsct compilation / pkgdef / vsix / deployment).
+       NuGet only auto-imports the build\ shell that sets environment variables; manually import the real ones under tools\VSSDK. -->
+  <Import Project="$(PkgMicrosoft_VSSDK_BuildTools)\tools\VSSDK\Microsoft.VsSDK.targets" Condition="'$(PkgMicrosoft_VSSDK_BuildTools)' != ''" />
+  <ItemGroup>
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.sdk.analyzers\15.8.33\build\AdditionalFiles\vs-threading.MainThreadAssertingMethods.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.sdk.analyzers\15.8.33\build\AdditionalFiles\vs-threading.MainThreadSwitchingMethods.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.sdk.analyzers\15.8.33\build\AdditionalFiles\vs-threading.MembersRequiringMainThread.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.threading.analyzers\17.0.64\build\AdditionalFiles\vs-threading.LegacyThreadSwitchingMembers.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.threading.analyzers\17.0.64\build\AdditionalFiles\vs-threading.MainThreadAssertingMethods.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.threading.analyzers\17.0.64\build\AdditionalFiles\vs-threading.MainThreadSwitchingMethods.txt" />
+    <AdditionalFiles Remove="C:\Users\xunqinbo\.nuget\packages\microsoft.visualstudio.threading.analyzers\17.0.64\build\AdditionalFiles\vs-threading.MembersRequiringMainThread.txt" />
+  </ItemGroup>
+
+</Project>
